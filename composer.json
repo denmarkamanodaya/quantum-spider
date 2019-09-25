@@ -1,0 +1,26 @@
+{
+    "name": "Quantum/Spider",
+    "description": "Spider Suite",
+    "minimum-stability": "dev",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Dannyneverfade",
+            "email": "dannyneverfade@yahoo.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.0",
+        "vlucas/phpdotenv": "^2.5",
+        "monolog/monolog": "^2.0",
+        "gofabian/negotiation-middleware": "v0.1.3",
+        "rjkip/ftp-php": "v1.1.0",
+        "educoder/pest": "1.0.0",
+        "peppeocchi/php-cron-scheduler": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spider\\": "library/php/Spider"
+        }
+    }
+}

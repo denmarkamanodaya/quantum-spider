@@ -1,0 +1,1 @@
+{"casperFlags": "--web-security=false --ignore-ssl-errors=true --remote-debugger-port=9000 --remote-debugger-autorun=yes"}
