@@ -94,8 +94,9 @@ function gatherAllCatalogueLinks()
                 auction_urls = this.evaluate(function() 
                 {
                     var auction_urls    = [];
-                    var pagination_length  = document.querySelectorAll("a.paging").length;
-                    //var pagination_length = 1;
+			var total_count = document.querySelector("[class='listing-count']").innerText.trim();
+			var pagination_length = Math.ceil(total_count.replace(/\D/g,'') / 15);
+			
                     for (var x = 1; x <= pagination_length; x++) 
                     {
                         var auction_url     = "https://www.carandclassic.co.uk/classic_cars.php?category=&make=&region=&country=1&era=&type=1&price=&keyword=&S.x=37&S.y=15&page=" + x;
