@@ -40,6 +40,8 @@ var casper = qs.getCasper();
  */
 linkSpiderEventListeners();
 
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
+
 casper
     .start(
         "https://www.burnleyauctioneers.co.uk/index.php/next-sale/plant-machinery-hgv-light-commercial-auction"
@@ -351,11 +353,13 @@ function linkSpiderEventListeners() {
             "cdn.syndication",
             "linkedin",
             "google-analytics",
+            "google",
             "amazonaws",
             "spincar",
             "FMSearchGet",
             "swipetospin",
-            "cloudflare"
+            "cloudflare",
+            "user"
         ];
 
         skip.forEach(function(needle) {
@@ -363,11 +367,5 @@ function linkSpiderEventListeners() {
                 request.abort();
             }
         });
-    });
-
-    casper.on("resource.requested", function(requestData, request) {
-        if (!(requestData.url.indexOf("burnleyauctioneers") > -1)) {
-            request.abort();
-        }
     });
 }

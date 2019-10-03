@@ -37,7 +37,8 @@ var casper = qs.getCasper();
  */
 linkSpiderEventListeners();
 
-casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X)");
+//casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X)");
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
     .start("http://www.mag.co.uk/vehicle#rows=10")
@@ -333,9 +334,13 @@ function linkSpiderEventListeners() {
             "cdn.syndication",
             "linkedin",
             "google-analytics",
-            "youtube",
-            "player-en_US",
-            "addthis_widget"
+            "google",
+            "amazonaws",
+            "spincar",
+            "FMSearchGet",
+            "swipetospin",
+            "cloudflare",
+            "user"
         ];
 
         skip.forEach(function(needle) {
@@ -345,9 +350,4 @@ function linkSpiderEventListeners() {
         });
     });
 
-    casper.on("resource.requested", function(requestData, request) {
-        if (!(requestData.url.indexOf("www.mag.co.uk") > -1)) {
-            request.abort();
-        }
-    });
 }
