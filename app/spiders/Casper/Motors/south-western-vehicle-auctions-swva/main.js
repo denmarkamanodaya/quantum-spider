@@ -23,6 +23,13 @@ var scrapeData = {
     currentData: 0
 };
 
+var search = {};
+
+var auctionIdx = 0;
+var auction_urls = [];
+
+//var search = {};
+
 // -----------------------------------------------------------------------------
 // Casper initialization
 // -----------------------------------------------------------------------------
@@ -36,9 +43,6 @@ var casper = qs.getCasper();
  * Initialize any spider event listeners
  */
 linkSpiderEventListeners();
-
-
-casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
     .start("http://stock.swva.co.uk/Sale")
@@ -118,8 +122,7 @@ function gatherAllAuctionLinks() {
 }
 
 function processAuction() {
-    if (auctionIdx < auction_urls.length) 
-        
+    if (auctionIdx < auction_urls.length) {
         search = {
             pages: [],
             currentPage: 0
