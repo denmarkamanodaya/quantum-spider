@@ -349,5 +349,4 @@ function linkSpiderEventListeners() {
             }
         });
     });
-
 }

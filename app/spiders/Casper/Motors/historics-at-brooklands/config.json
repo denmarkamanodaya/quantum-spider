@@ -1,0 +1,1 @@
+{"casperFlags": "--web-security=false --web-security=no --ignore-ssl-errors=true --ignore-ssl-errors=yes --ssl-protocol=tlsv1 --ssl-protocol=any"}

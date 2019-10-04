@@ -38,14 +38,13 @@ var auction_urls = [];
  * Initialize CasperJS
  */
 var casper = qs.getCasper();
-casper.userAgent(
-    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0"
-);
 
 /**
  * Initialize any spider event listeners
  */
 linkSpiderEventListeners();
+
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
     .start("http://www4.amstock.co.uk/stoodley/listing.aspx")

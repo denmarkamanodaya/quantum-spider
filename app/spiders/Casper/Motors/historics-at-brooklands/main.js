@@ -35,12 +35,12 @@ var auction_urls = [];
  */
 var casper = qs.getCasper();
 
-casper.userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X)");
-
 /**
  * Initialize any spider event listeners
  */
 linkSpiderEventListeners();
+
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
     .start("https://www.historics.co.uk/buying/auctions/")
@@ -382,9 +382,12 @@ function linkSpiderEventListeners() {
             "linkedin",
             "google-analytics",
             "google",
-            "youtube",
-            "player-en_US",
-            "addthis_widget"
+            "amazonaws",
+            "spincar",
+            "FMSearchGet",
+            "swipetospin",
+            "cloudflare",
+            "user"
         ];
 
         skip.forEach(function(needle) {
@@ -392,11 +395,5 @@ function linkSpiderEventListeners() {
                 request.abort();
             }
         });
-    });
-
-    casper.on("resource.requested", function(requestData, request) {
-        if (!(requestData.url.indexOf("www.historics.co.uk") > -1)) {
-            request.abort();
-        }
     });
 }

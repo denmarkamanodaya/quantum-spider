@@ -38,14 +38,13 @@ var auction_urls = [];
  * Initialize CasperJS
  */
 var casper = qs.getCasper();
-casper.userAgent(
-    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0"
-);
 
 /**
  * Initialize any spider event listeners
  */
 linkSpiderEventListeners();
+
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
     .start("http://www4.amstock.co.uk/stoodley/listing.aspx")
@@ -140,119 +139,105 @@ function processAuction() {
             gatherSearchPages.call(this);
         });
 
-        // this.then(function() {
-        //     this.wait(5000);
-        //     gatherSearchResultLinks.call(this);
-        // });
+        this.then(function() {
+            this.wait(5000);
+            gatherSearchResultLinks.call(this);
+        });
     }
 }
 
 function gatherSearchPages() {
-    // this.waitForSelector(".stockPagination", function() {
-    //     this.then(function() {
-    //         qs.log("Gather Search Pages From Every Auctions.");
-    //         search.pages = this.evaluate(function() {
-    //             var pages = [];
-    //             try {
-    //                 var pageCnt = document.querySelectorAll(
-    //                     ".stockPagination tr"
-    //                 ).length;
+    this.waitForSelector(".stockPagination", function() {
+        this.then(function() {
+            qs.log("Gather Search Pages From Every Auctions.");
+            search.pages = this.evaluate(function() {
+                var pages = [];
+                try {
+                    var pageCnt = document.querySelectorAll(
+                        ".stockPagination tr"
+                    ).length;
 
-    //                 for (var i = 1; i <= pageCnt; i++) {
-    //                     pages.push(i);
-    //                 }
-    //             } catch (err) {
-    //                 pages.push(1);
-    //             }
+                    for (var i = 1; i <= pageCnt; i++) {
+                        pages.push(i);
+                    }
+                } catch (err) {
+                    pages.push(1);
+                }
 
-    //             return pages;
-    //         });
-    //     });
+                return pages;
+            });
+        });
 
-    //     this.then(function() {
-    //         if (search.pages.length > 0) {
-    //             qs.log(
-    //                 search.pages.length + 1 + " Total number of pages found"
-    //             );
-    //             this.then(addLinksToScrapeData);
-    //         } else {
-    //             search.pages = [];
-    //             qs.log("No Results Found!");
-    //             auctionIdx++;
-    //             processAuction.call(this);
-    //         }
-    //     });
-    // });
-
-    this.then(function()
-    {
-        var afterWait = function()
-        {
-            qs.log("Gathering Lots.");
-            addLinksToScrapeData.call(this);
-        };
-
-        this.then(function()
-        {
-            this.waitForSelector('#ContentPlaceHolder1_gvStock', afterWait);
+        this.then(function() {
+            if (search.pages.length > 0) {
+                qs.log(
+                    search.pages.length + 1 + " Total number of pages found"
+                );
+                this.then(addLinksToScrapeData);
+            } else {
+                search.pages = [];
+                qs.log("No Results Found!");
+                auctionIdx++;
+                processAuction.call(this);
+            }
         });
     });
 }
 
-// function gatherSearchResultLinks() {
-//     this.then(function() {
-//         if (search.pages[search.currentPage]) {
-//             qs.log(
-//                 "There are " +
-//                     (search.pages.length - search.currentPage) +
-//                     " more pages of search results to scrape."
-//             );
+function gatherSearchResultLinks() {
+    this.then(function() {
+        if (search.pages[search.currentPage]) {
+            qs.log(
+                "There are " +
+                    (search.pages.length - search.currentPage) +
+                    " more pages of search results to scrape."
+            );
 
-//             var indx = search.pages[search.currentPage] + 1;
-//             this.evaluate(function(indx) {
-//                 var theForm = document.forms["form1"];
-//                 if (!theForm) {
-//                     theForm = document.form1;
-//                 }
-//                 function __doPostBack(eventTarget, eventArgument) {
-//                     if (!theForm.onsubmit || theForm.onsubmit() != false) {
-//                         theForm.__EVENTTARGET.value = eventTarget;
-//                         theForm.__EVENTARGUMENT.value = eventArgument;
-//                         theForm.submit();
-//                     }
-//                 }
+            var indx = search.pages[search.currentPage] + 1;
+            this.evaluate(function(indx) {
+                var theForm = document.forms["form1"];
+                if (!theForm) {
+                    theForm = document.form1;
+                }
+                function __doPostBack(eventTarget, eventArgument) {
+                    if (!theForm.onsubmit || theForm.onsubmit() != false) {
+                        theForm.__EVENTTARGET.value = eventTarget;
+                        theForm.__EVENTARGUMENT.value = eventArgument;
+                        theForm.submit();
+                    }
+                }
 
-//                 __doPostBack(
-//                     "ctl00$ctl00$ContentPlaceHolder1$gvStock",
-//                     "Page$" + indx
-//                 );
-//             }, indx);
+                __doPostBack(
+                    "ctl00$ctl00$ContentPlaceHolder1$gvStock",
+                    "Page$" + indx
+                );
+            }, indx);
 
-//             this.then(function() {
-//                 // To ensure the page will completely load
-//                 var afterWait = function() {
-//                     // Collect all the links to scrape data on the page
-//                     addLinksToScrapeData.call(this);
+            this.then(function() {
+                // To ensure the page will completely load
+                var afterWait = function() {
+                    // Collect all the links to scrape data on the page
+                    addLinksToScrapeData.call(this);
 
-//                     this.then(function() {
-//                         // Increment the current search results page
-//                         search.currentPage++;
+                    this.then(function() {
+                        // Increment the current search results page
+                        search.currentPage++;
 
-//                         // Run this function again until there are no more catalogues
-//                         this.then(gatherSearchResultLinks);
-//                     });
-//                 };
+                        // Run this function again until there are no more catalogues
+                        this.then(gatherSearchResultLinks);
+                    });
+                };
 
-//                 this.then(function() {
-//                     this.waitForSelector(".stockPagination", afterWait);
-//                 });
-//             });
-//         } else {
-//             auctionIdx++;
-//             processAuction.call(this);
-//         }
-//     });
-// }
+                this.then(function() {
+                    this.waitForSelector(".stockPagination", afterWait);
+                });
+            });
+        } else {
+            auctionIdx++;
+            processAuction.call(this);
+        }
+    });
+}
 
 /**
  * Add links
