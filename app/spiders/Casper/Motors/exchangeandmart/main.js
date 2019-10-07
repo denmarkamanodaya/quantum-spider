@@ -95,6 +95,9 @@ function gatherAllCatalogueLinks()
             {
                 auction_urls = this.evaluate(function() 
                 {
+			var today = new Date();
+			var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
                     var auction_urls            = [];
                     var element                 = document.querySelectorAll('span.hdShow span');                    
                     var pagination_last_count   = Math.ceil(element[0].innerText.trim()/10);
@@ -106,7 +109,7 @@ function gatherAllCatalogueLinks()
 
                         auction_urls.push({
                             url:            auction_url
-                            ,auction_date: '2019-11-11',
+                            ,auction_date:  date,
                         });
                     }
 
