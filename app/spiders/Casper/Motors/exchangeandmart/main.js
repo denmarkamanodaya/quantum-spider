@@ -95,12 +95,9 @@ function gatherAllCatalogueLinks()
             {
                 auction_urls = this.evaluate(function() 
                 {
-			var today = new Date();
-			var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-
                     var auction_urls            = [];
                     var element                 = document.querySelectorAll('span.hdShow span');                    
-                    var pagination_last_count   = Math.ceil(element[0].innerText.trim()/10);
+                    var pagination_last_count   = Math.ceil(element[0].innerText.trim());
                     // var pagination_last_count   = 1;
 
                     for (var x = 1; x <= pagination_last_count; x++) 
@@ -109,7 +106,6 @@ function gatherAllCatalogueLinks()
 
                         auction_urls.push({
                             url:            auction_url
-                            ,auction_date:  date,
                         });
                     }
 
@@ -406,8 +402,10 @@ function parse(lotData)
 
             }).join(", ");
 
+	var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
-        lot["auction_date"] = '2019-11-12';
+        lot["auction_date"] = date;
 
         // // MOT
         // if (details["MOT"]) 

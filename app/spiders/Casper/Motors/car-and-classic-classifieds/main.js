@@ -37,6 +37,8 @@ var casper = qs.getCasper();
 linkSpiderEventListeners();
 
 
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
+
 casper
     .start("https://www.carandclassic.co.uk/classic_cars.php?category=&make=&region=&country=1&era=&type=1&price=&keyword=&S.x=37&S.y=15")
     .then(function() 
@@ -431,36 +433,27 @@ function parse(lotData)
     return lot;
 }
 
-function linkSpiderEventListeners() 
-{
-    casper.on("resource.requested", function(requestData, request) 
-    {
+function linkSpiderEventListeners() {
+    casper.on("resource.requested", function(requestData, request) {
         var skip = [
             "facebook",
             "twitter",
             "cdn.syndication",
             "linkedin",
             "google-analytics",
-            "youtube",
-            "player-en_US",
-            "addthis_widget",
-            "foundation"
+            "google",
+            "amazonaws",
+            "spincar",
+            "FMSearchGet",
+            "swipetospin",
+            "cloudflare",
+            "user"
         ];
 
-        skip.forEach(function(needle) 
-        {
-            if (requestData.url.indexOf(needle) > 0) 
-            {
+        skip.forEach(function(needle) {
+            if (requestData.url.indexOf(needle) > 0) {
                 request.abort();
             }
         });
-    });
-
-    casper.on("resource.requested", function(requestData, request) 
-    {
-        if (!(requestData.url.indexOf("carandclassic") > -1)) 
-        {
-            request.abort();
-        }
     });
 }
