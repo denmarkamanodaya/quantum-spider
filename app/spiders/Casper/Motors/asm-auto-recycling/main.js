@@ -42,6 +42,8 @@ var test;
  */
 linkSpiderEventListeners();
 
+casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
+
 casper
     .start(
         //"https://auctions.asm-autos.co.uk/vehicle-list/?type=9&make=&trns=0&fuel=0&catc=0&memr=32&site=&dist=0&sort=0&srch="
@@ -414,9 +416,13 @@ function linkSpiderEventListeners() {
             "cdn.syndication",
             "linkedin",
             "google-analytics",
-            "youtube",
-            "player-en_US",
-            "addthis_widget"
+            "google",
+            "amazonaws",
+            "spincar",
+            "FMSearchGet",
+            "swipetospin",
+            "cloudflare",
+            "user"
         ];
 
         skip.forEach(function(needle) {
@@ -424,11 +430,5 @@ function linkSpiderEventListeners() {
                 request.abort();
             }
         });
-    });
-
-    casper.on("resource.requested", function(requestData, request) {
-        if (!(requestData.url.indexOf("auctions.asm-autos.co.uk") > -1)) {
-            request.abort();
-        }
     });
 }
