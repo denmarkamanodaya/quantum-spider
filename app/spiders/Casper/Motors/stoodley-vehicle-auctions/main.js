@@ -96,21 +96,25 @@ function gatherAllCatalogueLinks()
                 auction_urls = this.evaluate(function() 
                 {
                     var auction_urls    = [];
-			var obj = document.querySelectorAll("table#ContentPlaceHolder1_gvSales tbody tr");
-			
-                    for (var x = 0; x < obj.length; x++) 
+
+                    var obj = document.querySelectorAll("table#ContentPlaceHolder1_gvSales tr");
+
+                    for (var x = 0; x <= (obj.length-1); x++) 
                     {
-			if(x > 0)
-			{
-				var test = obj[x].querySelectorAll("tablecell");
-				    test = test[0].innerText.trim();
+        			    if(x == 0) { }
+        			    else
+        			    {
+        				    var test = obj[x].querySelectorAll(".tablecell");
+            				var auction_url  = "http://stoodley.kfsnet.co.uk/SaleStock.aspx?Sale=" + test[0].innerText.trim();
 
-                        	var auction_url     = "http://stoodley.kfsnet.co.uk/SaleStock.aspx?Sale=" test;
+                            var auction_date = test[1].innerText.trim().split("/");
+                                auction_date = auction_date[2] + "-" + auction_date[1] + "-" + auction_date[0]
 
-                        	auction_urls.push({
-                            		url: auction_url
-                        	});
-			}
+                            auction_urls.push({
+                                url: auction_url,
+                                auction_date: auction_date
+                            });
+        			    }
                     }
 
                     return auction_urls;
@@ -161,7 +165,7 @@ function gatherResultLinksFromCatalogues()
 
                 this.then(function() 
                 {
-                    this.waitForSelector('#browserPageItemList', afterWait);
+                    this.waitForSelector('#ContentPlaceHolder1_gvStock', afterWait);
                 });
             });
         }
@@ -192,28 +196,16 @@ function addLinksToScrapeData()
 function getLinks(auctionInfo) 
 {   
     var links       = [];
-    var element     = document.querySelectorAll('#browserPageItemList > div.item');
+    var element     = document.querySelectorAll('.tblCarLot a');
 
     for (var i = 0; i < element.length; i++) 
     {
-        var lotname         = element[i].querySelector('div.titleAndText > a').innerText.trim();
-        var lot_url         = element[i].querySelector('div.titleAndText > a').href;
-        var keypoints_obj   = element[i].querySelectorAll('div.itemkeypoints ul');
-
-        if(keypoints_obj.length)
-        {
-            var price           = keypoints_obj[0].children[0].innerText.trim();
-            var estimate        = keypoints_obj[0].children[0].innerText.trim();
-            var auction_date    = keypoints_obj[0].children[1].innerText.trim();
+        var lot_url         = element[i].href;
 
             links.push({
                 url:            lot_url,
-                name:           lotname,
-                price:          price,
-                auction_date:   auction_date,
-                estimate:       estimate
+                auction_date:   auctionInfo.auction_date
             });
-        }
     }
 
     return links;
@@ -240,7 +232,7 @@ function spiderDetailsPage()
 
             this.thenOpen(url);
 
-            this.waitForSelector('#advertPageItemMain', 
+            this.waitForSelector('#stockContainer', 
 
                 function()
                 {
@@ -342,45 +334,7 @@ function parse(lotData)
 
         var details = {};
 
-        var vehicle_specs = document.querySelector("#itemText").parentNode.nextElementSibling.children[0];
-            vehicle_specs = vehicle_specs.querySelectorAll("tr");
-
-        // for(var i=0; i<vehicle_specs.length; i++)
-        // {
-        //     if(vehicle_specs[i].children[0].innerText.trim().toLowerCase() == 'exterior')
-        //     {   
-        //         var sub_obj = vehicle_specs[i].children[1].querySelectorAll('li.specs-list__item');
-
-        //         for(var x=0; x<sub_obj.length; x++)
-        //         {
-        //             // Colour
-        //             if(sub_obj[x].querySelector("span.specs-list__item__name").innerText.trim().toLowerCase() == 'colour')
-        //             {
-        //                 lot["colour"] = sub_obj[x].querySelector("span.specs-list__item__value").innerText.trim();
-        //             }
-                    
-        //             // Type
-        //             if(sub_obj[x].querySelector("span.specs-list__item__name").innerText.trim().toLowerCase() == 'body type')
-        //             {
-        //                 lot["type"] = sub_obj[x].querySelector("span.specs-list__item__value").innerText.trim();
-        //             }
-        //         }
-        //     }
-        // }
-
-        // var feature_specs    = document.querySelectorAll('li.feature-specs__item');
-
-        // lot["engine_size"]  = feature_specs[0].children[0].innerText.trim();
-        // lot["fuel"]         = feature_specs[3].children[0].innerText.trim();
-        
-        // Gearbox
-        // if( feature_specs[4].children[0].innerText.trim().toLowerCase() == 'cvt') { lot["gearbox"] = 'Auto' } else { lot["gearbox"] = feature_specs[4].children[0].innerText.trim() } ;
-        // lot["mot"]          = "";
-        // lot["registration"] = "";
-
-
-
-        lot["images"] = [].slice.call(document.querySelectorAll('#advert-gallery li > img'))
+        lot["images"] = [].slice.call(document.querySelectorAll('.stockimage img'))
             .map(function(img) 
             {
                 return img.src;
@@ -391,43 +345,43 @@ function parse(lotData)
 
             }).join(", ");
 
+    	
+    	var vehicle_specs = document.querySelectorAll('td.carDetailLabel');
 
-        // Price
-        lot["specs_length"] = vehicle_specs.length;
-
-        for(var i=0; i<vehicle_specs.length; i++)
+        for(var i=0; i < vehicle_specs.length; i++)
         {
-            if(vehicle_specs[i].querySelector("td.caption").innerText.toLowerCase() == 'make')
-            {                   
-                // Manufacturer
-                lot["type"] = vehicle_specs[i].querySelector("td.caption").nextElementSibling.innerText;
-            }
+    		if(vehicle_specs[i].innerText.trim().toLowerCase() == 'vehicle') {
+    		  lot["name"] = vehicle_specs[i].nextElementSibling.innerText.trim(); }
 
-            if(vehicle_specs[i].querySelector("td.caption").innerText.toLowerCase() == 'model')
-            {                   
-                // Model
-                lot["model"] = vehicle_specs[i].querySelector("td.caption").nextElementSibling.innerText;
-            }
+            if(vehicle_specs[i].innerText.trim().toLowerCase() == 'mileage') {
+              lot["mileage"] = vehicle_specs[i].nextElementSibling.innerText.trim(); }
 
-            if(vehicle_specs[i].querySelector("td.caption").innerText.toLowerCase() == 'mileage')
-            {                   
-                // Mileage
-                lot["mileage"] = vehicle_specs[i].querySelector("td.caption").nextElementSibling.innerText;
-            }
+            if(vehicle_specs[i].innerText.trim().toLowerCase() == 'mot') {
+              lot["mot"] = vehicle_specs[i].nextElementSibling.innerText.trim(); }
 
-            if(vehicle_specs[i].querySelector("td.caption").innerText.toLowerCase() == 'Price')
-            {
-                // Price
-                lot["estimate"] = vehicle_specs[i].querySelector("td.caption").nextElementSibling.innerText;
-            }
+            if(vehicle_specs[i].innerText.trim().toLowerCase() == 'description') {
+              lot["description"] = vehicle_specs[i].nextElementSibling.innerText.trim(); }
 
+            if(vehicle_specs[i].innerText.trim().toLowerCase() == 'vehicle') {
+              lot["name"] = vehicle_specs[i].nextElementSibling.innerText.trim(); }
         }
 
-        // Description
-        lot["description"]  = document.querySelector("#itemText").innerText;
-        
+        lot["auction_date"] = lotData.auction_date;
 
-        lot = jQuery.extend({}, lot, lotData);
+        // lot["colour"]
+        // lot["type"]
+        // lot["registration"] = "";
+        // lot["auction_date"] = "2019-11-11";
+        // lot["estimate"]     = document.querySelector('span[class="infoBar--item__price"]').innerText.trim();
+        // lot["price"]        = lot["estimate"].replace(/\D/g,'');
+        // lot["price"]        = parseFloat(Math.round(lot["price"] * 100) / 100).toFixed(2);
+        // lot["engine_size"]  = feature_specs[0].children[0].innerText.trim();
+        // lot["fuel"]         = feature_specs[3].children[0].innerText.trim();
+        // lot["manufacturer"] = document.querySelector("#productMetricsManufacturer").innerText.trim();
+        // lot["model"]        = document.querySelector("#headline").innerText.trim();
+        // lot["year"]     = document.querySelector("#yearModel").innerText.trim();
+
+        //lot = jQuery.extend({}, lot, lotData);
 
     } 
     catch (err) 
