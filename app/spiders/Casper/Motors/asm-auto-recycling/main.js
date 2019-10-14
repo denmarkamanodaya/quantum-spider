@@ -391,16 +391,26 @@ function parse(lotData) {
 
         lot["description"] = escapeHTML(details["Description"]);
 
-        var images = [];
-        for (var item = 0; item < swipelist.length; item++) {
-            images.push(swipelist[item].src);
-        }
+        // var images = [];
+        // for (var item = 0; item < swipelist.length; item++) {
+        //     images.push(swipelist[item].src);
+        // }
 
-        lot["images"] = images
-            .filter(function(item, pos, self) {
+        lot["images"] = [].slice.call(document.querySelectorAll('img.pswp__img'))
+            .map(function(img) 
+            {
+                return img.src;
+
+            }).filter(function(item, pos, self) 
+            {
                 return self.indexOf(item) == pos;
-            })
-            .join(", ");
+
+            }).join(", ");
+
+
+
+
+            
     } catch (err) {
         lot["_error"] = err.message;
     }
