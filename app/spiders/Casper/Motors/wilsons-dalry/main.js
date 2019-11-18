@@ -47,7 +47,8 @@ linkSpiderEventListeners();
 casper.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36");
 
 casper
-    .start("https://www.wilsonsauctions.com/upcoming-auctions?location=Dalry&category=Car")
+    //.start("https://www.wilsonsauctions.com/upcoming-auctions?location=Dalry&category=Car")
+	.start("https://www.wilsonsauctions.com/upcoming-auctions?location=Telford&category=Car")
     .then(function() {
         qs.log("--");
         qs.log("Starting spider run...");
