@@ -59,7 +59,7 @@ class Transmit
     public function transmitScrapeData($file)
     {
         try {
-            $result = $this->_client->transmit($file);
+		$result = $this->_client->transmit($file);
         }
         // Just re-throw known transmit exceptions
         catch (\Spider\Transmit\Exception $e) {
@@ -86,7 +86,7 @@ class Transmit
         /*
          * Attempt to send notify the "downstream" systems.  (This tells the
          * Quantum/Input system that it should process the file now.
-         */
+	 */
         $this->notifyDownstream($file);
 
         return true;
