@@ -184,12 +184,12 @@ function getLinks(auctionInfo)
 
 	for (var x = 0; x < auctionhouse_obj.length; x++)
         {
-        	if(auctionhouse_obj[x].href.indexOf("ahlondon-uk") > -1)
+        	if(auctionhouse_obj[x].href.indexOf("online.auctionhouse") > -1)
                 {
-                	var ahlondon_url     = auctionhouse_obj[x].href;
+                	var online_url     = auctionhouse_obj[x].href;
 
                         links.push({
-                        	url: ahlondon_url,
+                        	url: online_url,
                         });
                  }
          }
@@ -218,7 +218,7 @@ function spiderDetailsPage()
 
             this.thenOpen(url);
 
-            this.waitForSelector('.lot-details-container', 
+            this.waitForSelector('.container', 
 
                 function()
                 {
@@ -335,66 +335,72 @@ function parse(lotData)
         // Price
 	var price_obj = document.querySelectorAll("div.topbar-lot-info ul li");
 		price_obj = price_obj[1].innerText.trim();
-		lot["price"] = price_obj.replace( /^\D+/g, '').replace("+", "").replace(",", "");
+		lot["price"] = price_obj.replace( /^\D+/g, '').replace("+", "").replace(",", "");	
 
 	// Address
-	lot["lot_address"] = document.querySelector("div.topbar-lot-info p").innerText.trim();	
-	
+	lot["lot_address"] = document.querySelector("div.topbar-lot-info p").innerText.trim();
+
 	// Lot Number
 
-	// Type
-	var lot_info_obj = document.querySelector("div.lot-info-panel ul");
-	lot["type"] = lot_info_obj.children[0].innerText.trim();
+	var lot_info_obj = document.querySelectorAll(".lot-info-right ul li");
 	
-	// Tenure
-	lot["tenure"] = lot_info_obj.children[2].innerText.trim();
+	if(lot_info_obj.count > 2)
+	{
+		// Type
+		lot["type"] = lot_info_obj[1].innerText.trim() + " " + lot_info_obj[0].innerText.trim();
+		// Tenure
+		lot["tenure"] = lot_info_obj[2].innerText.trim();
+	}
+		if(lot_info_obj.count == 1)
+		{
+			// Type
+			lot["type"] = lot_info_obj[0].innerText.trim();
+		}
+		
+		if(lot_info_obj.count == 2)
+		{
+			// Type
+			lot["type"] = lot_info_obj[0].innerText.trim();
+			// Tenure
+			lot["tenure"] = lot_info_obj[1].innerText.trim();
+		}
+
 
 	// Description
         var description_obj = document.querySelectorAll("div.lot-details-container h4");
+	lot["description"] = description_obj[1].nextElementSibling.nextElementSibling.nextElementSibling.innerText.trim();
+	
 
-        for(var i=0; i<description_obj.length; i++)
-        {
-        	if(description_obj[i].innerText.toLowerCase() == 'description')
-        	{
-                	// Description
-	                lot["description"] = description_obj[i].nextElementSibling.nextElementSibling.innerText.trim();
-        	}
-        }
-
-	// auction_date, time, venue
-	if(document.querySelector("div.end-date div.text-success"))
+	// Auction Date
+	if(document.querySelector("div.date-end") !== null)
 	{
-		var auction_date_obj = document.querySelectorAll("time.end-date-time");
-			auction_date_obj = auction_date_obj[0].innerText.trim();
-			
-			// Auction Date
-			auction_date_obj = auction_date_obj.split(" ");
-			lot["auction_date"] = auction_date_obj[2] + "-" + auction_date_obj[1] + "-" + auction_date_obj[0];
+		// Auction Date
+		var auction_date_obj = document.querySelector("div.date-end").innerText.trim();
 
-			// Auction Time
-			lot["auction_time"] = auction_date_obj[3];
-			
-			// Auction Venue
-			lot["auction_venue"] = "";	
+	    	auction_date_obj = auction_date_obj.split(" ");
+ 		lot["auction_date"] = auction_date_obj[2] + "-" + auction_date_obj[1] + "-" + auction_date_obj[0];
+	
+		// Auction Time
+		lot["auction_time"] = auction_date_obj[3];
 	}
 	else
 	{
-		// Auction Status
+		// Auction Status -- NEW!
 		lot["auction_status"] = "closed";
-
-		var auction_date_obj = document.querySelectorAll("time.end-date-time");
-			auction_date_obj = auction_date_obj[0].innerText.trim();
-			
-			// Auction Date
-			auction_date_obj = auction_date_obj.split(" ");
-                	lot["auction_date"] = auction_date_obj[2] + "-" + auction_date_obj[1] + "-" + auction_date_obj[0];
-	
-			// Auction Time
-			lot["auction_time"] = auction_date_obj[3];
 		
-			// Auction Venue
-			lot["auction_venue"] = "";
+		// Auction Date
+		auction_date_obj = document.querySelector(".end-date-time").innerText.trim();
+		auction_date_obj = auction_date_obj.split(" ");
+		
+		// Auction Date
+		lot["auction_date"] = auction_date_obj[2] + "-" + auction_date_obj[1] + "-" + auction_date_obj[0];
+
+		// Auction Time
+		lot["auction_time"] = auction_date_obj[3];
 	}
+	// Auction venue
+	lot["auction_venue"] = "";
+	    
 
 
 
